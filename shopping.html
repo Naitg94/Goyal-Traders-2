@@ -711,7 +711,7 @@ header button:hover {
 }
 
 /* ===== MISC ===== */
-.order-icon, .whatsapp-float {
+.whatsapp-float {
     position: fixed;
     width: 55px;
     height: 55px;
@@ -724,11 +724,10 @@ header button:hover {
     transition: all 0.3s var(--ease-bounce);
     z-index: 2000;
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    left: 25px; bottom: 25px; background: #25D366; color: white; text-decoration: none;
 }
-.order-icon { right: 25px; bottom: 100px; background: var(--secondary); color: white; }
-.whatsapp-float { left: 25px; bottom: 25px; background: #25D366; color: white; text-decoration: none; }
 
-.order-icon:hover, .whatsapp-float:hover { transform: scale(1.15) rotate(-5deg); }
+.whatsapp-float:hover { transform: scale(1.15) rotate(-5deg); }
 
 .empty-state { text-align: center; padding: 40px 20px; color: #888; animation: fadeInUp 0.5s ease; }
 .empty-state svg { width: 80px; height: 80px; opacity: 0.5; margin-bottom: 15px; }
@@ -787,8 +786,7 @@ body.cart-open .product-container { filter: blur(5px); pointer-events: none; tra
 
 <div class="toast" id="toast">Item Added</div>
 
-<div class="order-icon" onclick="toggleOrders()">📦</div>
-
+<!-- Order Panel HTML Kept (Hidden by default, no icon to open it) -->
 <div class="order-panel" id="orderPanel">
     <h3>Your Orders</h3>
     <div id="orderList"></div>
@@ -1145,7 +1143,7 @@ if(localStorage.getItem("darkMode") === "true") {
     document.querySelector("header button").textContent = "🌙";
 }
 
-// Orders Panel
+// Orders Panel (Logic kept, but Icon removed from UI)
 function toggleOrders() {
     document.getElementById("orderPanel").classList.toggle("open");
     document.body.classList.toggle("cart-open");
@@ -1182,9 +1180,9 @@ document.addEventListener("click", function(e) {
         document.body.classList.remove("cart-open");
     }
     
+    // Order icon listener removed as the icon is removed
     const orderPanel = document.getElementById("orderPanel");
-    const orderIcon = document.querySelector(".order-icon");
-    if(orderPanel.classList.contains("open") && !orderPanel.contains(e.target) && !orderIcon.contains(e.target)) {
+    if(orderPanel.classList.contains("open") && !orderPanel.contains(e.target)) {
         orderPanel.classList.remove("open");
         document.body.classList.remove("cart-open");
     }
