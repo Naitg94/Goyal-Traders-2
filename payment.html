@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment | Goyal Traders</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',sans-serif;
+    background:#f4f6f9;
+    transition:0.3s;
+}
+
+/* HEADER */
+header{
+    background: linear-gradient(135deg, #2c5364, #203a43);
+    color:white;
+    padding:20px;
+    text-align:center;
+    position:relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.back-btn{
+    position:absolute;
+    left:20px;
+    top:50%;
+    transform:translateY(-50%);
+    background:orange;
+    border:none;
+    color:white;
+    padding:8px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    transition: opacity 0.2s;
+}
+
+.back-btn:hover {
+    opacity: 0.9;
+}
+
+/* Dark Mode Button */
+.dark-toggle{
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    background:orange;
+    border:none;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size: 18px;
+    transition: transform 0.2s;
+}
+
+.dark-toggle:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* CONTAINER */
+.container{
+    max-width:900px;
+    margin:30px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+/* Layout */
+.flex{
+    display:flex;
+    gap:40px;
+    flex-wrap:wrap;
+}
+
+.section{
+    flex:1;
+    min-width:300px;
+}
+
+/* Inputs */
+input[type="text"]{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+/* Radio Buttons Styling */
+label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+    accent-color: #2c5364;
+}
+
+/* Button */
+.pay-btn{
+    width:100%;
+    padding:14px;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 15px;
+}
+
+.pay-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+.pay-btn:active {
+    transform: translateY(0);
+}
+
+/* Order summary */
+.order-item{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #eee;
+}
+
+.total{
+    font-size:22px;
+    font-weight:bold;
+    margin-top:20px;
+    color: #2c5364;
+    border-top: 2px solid #eee;
+    padding-top: 10px;
+}
+
+/* UPI / COD Boxes */
+.upi-box{
+    background:#f0f8ff;
+    padding:15px;
+    border-radius:8px;
+    margin-top:15px;
+    font-size:14px;
+    border-left: 4px solid #2c5364;
+    display: none; /* Hidden by default */
+}
+
+.coming{
+    color:orange;
+    font-weight:bold;
+}
+
+.card-box{
+    background:#fff3f3;
+    padding:10px;
+    border-radius:8px;
+    margin-top:15px;
+    border-left: 4px solid red;
+    display: none; /* Hidden by default */
+}
+
+.unavailable{
+    color:red;
+    font-weight:bold;
+}
+
+/* DARK MODE */
+.dark{
+    background:#1e1e1e;
+    color:#e0e0e0;
+}
+
+.dark .container{
+    background:#2c2c2c;
+    color:white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.dark input{
+    background:#444;
+    color:white;
+    border:1px solid #666;
+}
+
+.dark .total {
+    color: #4CAF50;
+}
+
+.dark .upi-box, .dark .card-box {
+    background: #333;
+    border-left-color: #666;
+}
+
+.strike{
+    text-decoration: line-through;
+    color:red;
+}
+
+/* Mobile Responsive Fixes */
+@media (max-width: 600px) {
+    header h2 {
+        font-size: 18px;
+        padding: 0 60px;
+    }
+    .container {
+        padding: 20px;
+        margin: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <h2>Secure Payment</h2>
+    <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+</header>
+
+<div class="container">
+<div class="flex">
+
+<!-- Billing Section -->
+<div class="section">
+    <h3>Billing Details</h3>
+
+    <input type="text" id="fullName" placeholder="Full Name *">
+    <input type="text" id="mobile" placeholder="Mobile Number *">
+    <input type="text" id="address" placeholder="Address (Required for Home Delivery)">
+
+    <!-- DELIVERY OPTION -->
+    <h4>Delivery Option</h4>
+
+    <label>
+        <input type="radio" name="delivery" id="homeDelivery" value="home">
+        Home Delivery (₹30 / Free over ₹200)
+    </label>
+
+    <label>
+        <input type="radio" name="delivery" id="storePickup" value="pickup">
+        Store Pickup (Free)
+    </label>
+
+    <p id="deliveryError" style="color:red; font-weight:bold; font-size:14px;"></p>
+
+    <!-- PAYMENT METHOD -->
+    <h4 style="margin-top:25px;">Payment Method</h4>
+
+    <!-- 1. COD Option -->
+    <label>
+        <input type="radio" name="payment" value="cod" checked>
+        Cash on Delivery
+    </label>
+    
+    <!-- COD INFO BOX (Basic Info) -->
+    <div class="upi-box" id="codBox">
+        <p style="margin:0 0 5px 0;"><strong>Send payment to:</strong> 9893194455</p>
+        <p style="margin:0 0 5px 0;">Open any UPI app and send the total amount.</p>
+        <p style="margin:0 0 5px 0;"><strong>After payment:</strong> Send screenshot on WhatsApp.</p>
+    </div>
+
+    <!-- 2. UPI Option -->
+    <label>
+        <input type="radio" name="payment" value="upi">
+        UPI Payment
+    </label>
+
+    <!-- UPI INFO BOX (Detailed Info with Coming Soon) -->
+    <div class="upi-box" id="upiBox">
+        <p style="margin:0 0 5px 0;"><strong>Send payment to:</strong> 9893194455</p>
+        <p style="margin:0 0 5px 0;">Open any UPI app and send the total amount.</p>
+        <p style="margin:0 0 5px 0;"><strong>After payment:</strong> Send screenshot on WhatsApp.</p>
+        
+        <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+            <div>📱 PhonePe – <span class="coming">Coming Soon</span></div>
+            <div>📱 Google Pay – <span class="coming">Coming Soon</span></div>
+            <div>📱 Paytm – <span class="coming">Coming Soon</span></div>
+        </div>
+    </div>
+
+    <!-- 3. Card Option -->
+    <label>
+        <input type="radio" name="payment" value="card">
+        Credit / Debit Card
+    </label>
+
+    <!-- CARD INFO -->
+    <div class="card-box" id="cardBox">
+        <p class="unavailable">Currently Not Available</p>
+    </div>
+
+</div>
+
+<!-- Order Summary -->
+<div class="section">
+    <h3>Your Order</h3>
+    <div id="orderSummary"></div>
+    
+    <div class="order-item" id="deliveryRow">
+        <span>Delivery Charges</span>
+        <span id="deliveryDisplay">₹30</span>
+    </div>
+
+    <div class="total">
+        Total: ₹<span id="orderTotal">0</span>
+    </div>
+
+    <p style="font-size:13px; color:#666; margin-top:10px;">
+        * Free delivery on orders above ₹200
+    </p>
+</div>
+
+</div>
+
+<p id="errorMsg" style="color:red; font-weight:bold; text-align:center;"></p>
+<button class="pay-btn" onclick="completePayment()">Confirm Order via WhatsApp</button>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const summary = document.getElementById("orderSummary");
+const totalEl = document.getElementById("orderTotal");
+
+let subtotal = 0;
+
+// Render Cart Items
+cart.forEach(item => {
+    subtotal += item.price * item.qty;
+    summary.innerHTML += `
+    <div class="order-item">
+        <span>${item.name} x ${item.qty}</span>
+        <span>₹${item.price * item.qty}</span>
+    </div>`;
+});
+
+// Elements
+const homeDelivery = document.getElementById("homeDelivery");
+const storePickup = document.getElementById("storePickup");
+const addressField = document.getElementById("address");
+const errorMsg = document.getElementById("errorMsg");
+const paymentRadios = document.querySelectorAll("input[name='payment']");
+
+// Box Elements
+const codBox = document.getElementById("codBox");
+const upiBox = document.getElementById("upiBox");
+const cardBox = document.getElementById("cardBox");
+
+/* --- Event Listeners --- */
+
+// Delivery Logic
+homeDelivery.addEventListener("change", () => {
+    addressField.style.display = "block";
+    calculateTotal();
+});
+
+storePickup.addEventListener("change", () => {
+    addressField.style.display = "none";
+    calculateTotal();
+});
+
+// Payment Method Toggle Logic
+paymentRadios.forEach(radio => {
+    radio.addEventListener("change", (e) => {
+        const val = e.target.value;
+        
+        // Hide all boxes first
+        codBox.style.display = "none";
+        upiBox.style.display = "none";
+        cardBox.style.display = "none";
+
+        // Show relevant box based on selection
+        if(val === "cod") {
+            codBox.style.display = "block";
+        } else if(val === "upi") {
+            upiBox.style.display = "block";
+        } else if (val === "card") {
+            cardBox.style.display = "block";
+        }
+    });
+});
+
+
+/* --- Core Functions --- */
+
+function generateOrderID(){
+    return "GT" + Date.now();
+}
+
+function calculateTotal(){
+    let deliveryCharge = 30;
+    let displayText = "₹30";
+
+    // If store pickup selected → free delivery
+    if(storePickup.checked){
+        deliveryCharge = 0;
+        displayText = "<span class='strike'>₹30</span> FREE";
+    }   
+    // If order ≥ 200 → free delivery
+    else if(subtotal >= 200){
+        deliveryCharge = 0;
+        displayText = "<span class='strike'>₹30</span> FREE";
+    }
+
+    document.getElementById("deliveryDisplay").innerHTML = displayText;
+    document.getElementById("orderTotal").textContent = subtotal + deliveryCharge;
+}
+
+function completePayment(){
+
+    const name = document.getElementById("fullName").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const selectedPayment = document.querySelector("input[name='payment']:checked").value;
+
+    // Reset Error
+    errorMsg.textContent = "";
+
+    // Validation
+    if(name === "" || mobile === ""){
+        errorMsg.textContent = "Please fill required details.";
+        window.scrollTo(0, 0);
+        return;
+    }
+
+    if(mobile.length < 10){
+        errorMsg.textContent = "Please enter a valid mobile number.";
+        window.scrollTo(0, 0);
+        return;
+    }
+
+    const deliverySelected = document.querySelector("input[name='delivery']:checked");
+    
+    if(!deliverySelected){
+         errorMsg.textContent = "Select delivery option.";
+         return;
+    }
+
+    if(homeDelivery.checked && address === ""){
+        errorMsg.textContent = "Address required for Home Delivery.";
+        window.scrollTo(0, 0);
+        return;
+    }
+
+    calculateTotal();
+
+    const finalTotal = parseInt(document.getElementById("orderTotal").textContent);
+    const orderID = generateOrderID();
+
+    // Construct Message
+    let message = `Hello Goyal Traders,%0A%0A`;
+    message += `*New Order* 🛒%0A`;
+    message += `Order ID: ${orderID}%0A`;
+    message += `-------------------%0A`;
+    message += `*Items:*%0A`;
+
+    cart.forEach(item => {
+        message += `• ${item.name} x${item.qty} = ₹${item.price * item.qty}%0A`;
+    });
+
+    message += `-------------------%0A`;
+    message += `*Total:* ₹${finalTotal}%0A`;
+    message += `*Delivery:* ${storePickup.checked ? "Store Pickup 🏪" : "Home Delivery 🏠"}%0A`;
+    message += `*Payment:* ${selectedPayment.toUpperCase()}%0A`;
+    message += `%0A*Customer Details:*%0A`;
+    message += `Name: ${name}%0A`;
+    message += `Mobile: ${mobile}%0A`;
+    
+    if(homeDelivery.checked) {
+        message += `Address: ${address}%0A`;
+    }
+
+    const whatsappURL = `https://wa.me/919893194455?text=${message}`;
+
+    // We will clear the cart in order-success.html instead so the data persists
+
+    window.open(whatsappURL, "_blank");
+    window.location.href = "order-success.html";
+}
+
+function goBack(){
+    if(document.referrer !== ""){
+        window.history.back();
+    } else {
+        window.location.href="shopping.html";
+    }
+}
+
+function toggleDarkMode(){
+    document.body.classList.toggle("dark");
+    const btn = document.querySelector('.dark-toggle');
+    if(document.body.classList.contains("dark")){
+         btn.textContent = "☀️";
+         localStorage.setItem("darkMode", "true");
+    } else {
+         btn.textContent = "🌙";
+         localStorage.setItem("darkMode", "false");
+    }
+}
+
+// Initial Setup
+if(localStorage.getItem("darkMode")==="true"){
+    document.body.classList.add("dark");
+    document.querySelector('.dark-toggle').textContent = "☀️";
+}
+
+// Run initial calculations
+calculateTotal();
+
+// Trigger initial UI setup on load
+window.addEventListener('DOMContentLoaded', (event) => {
+    // Check default payment method (COD) and show correct box
+    const defaultPayment = document.querySelector("input[name='payment']:checked");
+    if(defaultPayment) {
+        if(defaultPayment.value === "cod") codBox.style.display = "block";
+        else if(defaultPayment.value === "upi") upiBox.style.display = "block";
+        else if(defaultPayment.value === "card") cardBox.style.display = "block";
+    }
+});
+
+</script>
+
+</body>
+</html>
